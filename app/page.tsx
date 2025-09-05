@@ -1,88 +1,100 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function KothiGudhaGame() {
-  const [currentGuess, setCurrentGuess] = useState("")
-  const [revealedLetters, setRevealedLetters] = useState<boolean[]>([])
-  const [attempts, setAttempts] = useState(0)
-  const [showShake, setShowShake] = useState(false)
-  const [showConfetti, setShowConfetti] = useState(false)
-  const [acceptedBot, setAcceptedBot] = useState(false)
-  const [blurLevel, setBlurLevel] = useState(20)
-  const [gameRevealed, setGameRevealed] = useState(false)
+  const [currentGuess, setCurrentGuess] = useState("");
+  const [revealedLetters, setRevealedLetters] = useState<boolean[]>([]);
+  const [attempts, setAttempts] = useState(0);
+  const [showShake, setShowShake] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [acceptedBot, setAcceptedBot] = useState(false);
+  const [blurLevel, setBlurLevel] = useState(20);
+  const [gameRevealed, setGameRevealed] = useState(false);
 
-  const targetName = "kothigudha"
-  const displayName = "KOTHI GUDHA"
-  const maxAttempts = 3
+  const targetName = "kothigudha";
+  const displayName = "KOTHI GUDHA";
+  const maxAttempts = 6;
 
   useEffect(() => {
-    setRevealedLetters(new Array(targetName.length).fill(false))
-    setBlurLevel(20)
-  }, [])
+    setRevealedLetters(new Array(targetName.length).fill(false));
+    setBlurLevel(20);
+  }, []);
 
   const handleGuess = () => {
     if (currentGuess.toLowerCase().trim() === displayName.toLowerCase()) {
-      setGameRevealed(true)
-      setShowConfetti(true)
-      setBlurLevel(0)
+      setGameRevealed(true);
+      setShowConfetti(true);
+      setBlurLevel(0);
     } else {
-      const lowerGuess = currentGuess.toLowerCase().trim()
+      const lowerGuess = currentGuess.toLowerCase().trim();
       if (lowerGuess.includes("banana") || lowerGuess === "banana") {
-        alert("🍌 Close, but I eat those. Try harder!")
+        alert("🍌 Close, but I eat those. Try harder!");
       }
 
-      setAttempts((prev) => prev + 1)
-      revealRandomLetter()
-      setBlurLevel((prev) => Math.max(0, prev - 6))
-      triggerShake()
+      setAttempts((prev) => prev + 1);
+      revealRandomLetter();
+      setBlurLevel((prev) => Math.max(10, prev - 1.67));
+      triggerShake();
     }
-    setCurrentGuess("")
-  }
+    setCurrentGuess("");
+  };
 
   const revealRandomLetter = () => {
     setRevealedLetters((prev) => {
-      const newRevealed = [...prev]
-      const hiddenIndices = newRevealed.map((revealed, index) => (!revealed ? index : -1)).filter((i) => i !== -1)
+      const newRevealed = [...prev];
+      const hiddenIndices = newRevealed
+        .map((revealed, index) => (!revealed ? index : -1))
+        .filter((i) => i !== -1);
 
       if (hiddenIndices.length > 0) {
-        const randomIndex = hiddenIndices[Math.floor(Math.random() * hiddenIndices.length)]
-        newRevealed[randomIndex] = true
+        const randomIndex =
+          hiddenIndices[Math.floor(Math.random() * hiddenIndices.length)];
+        newRevealed[randomIndex] = true;
       }
-      return newRevealed
-    })
-  }
+      return newRevealed;
+    });
+  };
 
   const triggerShake = () => {
-    setShowShake(true)
-    setTimeout(() => setShowShake(false), 500)
-  }
+    setShowShake(true);
+    setTimeout(() => setShowShake(false), 500);
+  };
 
   const handleAcceptBot = () => {
-    setAcceptedBot(true)
-    setGameRevealed(true)
-    setShowConfetti(true)
-    setBlurLevel(0)
-  }
+    setAcceptedBot(true);
+    setGameRevealed(true);
+    setShowConfetti(true);
+    setBlurLevel(0);
+  };
 
   const getHintText = () => {
-    const revealedCount = revealedLetters.filter(Boolean).length
-    if (revealedCount === 0) return "🐒 The monkey knows your name! Can you guess it?"
-    if (revealedCount <= 3) return "🔍 The image is getting clearer! Keep trying!"
-    if (revealedCount <= 6) return "🔥 So close! The monkey is almost revealed!"
-    return "🤖 Maybe you should accept you're a bot and let the monkey help you?"
-  }
+    const revealedCount = revealedLetters.filter(Boolean).length;
+    if (revealedCount === 0)
+      return "🐒 The monkey knows your name! Can you guess it?";
+    if (revealedCount <= 3)
+      return "🔍 The image is getting clearer! Keep trying!";
+    if (revealedCount <= 6)
+      return "🔥 So close! The monkey is almost revealed!";
+    return "🤖 Maybe you should accept you're a bot and let the monkey help you?";
+  };
 
   const renderRevealedName = () => {
     return displayName.split("").map((letter, index) => {
       if (letter === " ") {
-        return <span key={index} className="mx-2"></span>
+        return <span key={index} className="mx-2"></span>;
       }
 
-      const targetIndex = index < 5 ? index : index - 1 // Account for space
-      const isRevealed = revealedLetters[targetIndex]
+      const targetIndex = index < 5 ? index : index - 1; // Account for space
+      const isRevealed = revealedLetters[targetIndex];
 
       return (
         <span
@@ -93,9 +105,9 @@ export default function KothiGudhaGame() {
         >
           {isRevealed ? letter : "_"}
         </span>
-      )
-    })
-  }
+      );
+    });
+  };
 
   if (gameRevealed) {
     return (
@@ -108,7 +120,9 @@ export default function KothiGudhaGame() {
                 className="absolute w-3 h-3 confetti"
                 style={{
                   left: `${Math.random() * 100}%`,
-                  backgroundColor: ["#ea580c", "#f97316", "#d97706", "#fffbeb"][Math.floor(Math.random() * 4)],
+                  backgroundColor: ["#ea580c", "#f97316", "#d97706", "#fffbeb"][
+                    Math.floor(Math.random() * 4)
+                  ],
                   animationDelay: `${Math.random() * 3}s`,
                 }}
               />
@@ -125,37 +139,61 @@ export default function KothiGudhaGame() {
                 className="w-48 h-48 rounded-full object-cover shadow-lg"
                 style={{ filter: "blur(0px)" }}
               />
-              <div className="absolute -top-2 -right-2 text-6xl animate-bounce">👑</div>
-              <div className="absolute -bottom-2 -left-2 text-4xl animate-pulse">😎</div>
+              <div className="absolute -top-2 -right-2 text-6xl animate-bounce">
+                👑
+              </div>
+              <div className="absolute -bottom-2 -left-2 text-4xl animate-pulse">
+                😎
+              </div>
             </div>
             <CardTitle className="text-4xl font-bold text-orange-600">
               Congrats and Happy Birthday Kothi Gudha!
             </CardTitle>
-            <CardDescription className="text-xl text-orange-700">You're officially the Monkey King!</CardDescription>
+            <CardDescription className="text-xl text-orange-700">
+              You're officially the Monkey King!
+            </CardDescription>
           </CardHeader>
           <CardContent className="text-center space-y-6">
-            <div className="text-6xl font-bold text-orange-600 animate-pulse">KOTHI GUDHA</div>
+            <div className="text-6xl font-bold text-orange-600 animate-pulse">
+              KOTHI GUDHA
+            </div>
 
             <div className="bg-gradient-to-r from-orange-100 to-amber-100 p-6 rounded-lg border-2 border-orange-300">
-              <h3 className="text-2xl font-bold text-orange-600 mb-4">🐒 Monkey King Facts!</h3>
+              <h3 className="text-2xl font-bold text-orange-600 mb-4">
+                🐒 Monkey King Facts!
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                 <div className="bg-white p-4 rounded-lg border border-orange-200">
-                  <div className="text-lg font-semibold text-orange-600">🏡 Kothi Status:</div>
-                  <div className="text-orange-700">Royal Monkey Palace Owner</div>
-                </div>
-                <div className="bg-white p-4 rounded-lg border border-orange-200">
-                  <div className="text-lg font-semibold text-orange-600">🧠 Gudha Level:</div>
-                  <div className="text-orange-700">Supreme Monkey Wisdom</div>
-                </div>
-                <div className="bg-white p-4 rounded-lg border border-orange-200">
-                  <div className="text-lg font-semibold text-orange-600">🍌 Banana Skills:</div>
+                  <div className="text-lg font-semibold text-orange-600">
+                    🏡 Kothi Status:
+                  </div>
                   <div className="text-orange-700">
-                    {acceptedBot ? "Bot-level banana peeling" : "Expert banana connoisseur"}
+                    Royal Monkey Palace Owner
                   </div>
                 </div>
                 <div className="bg-white p-4 rounded-lg border border-orange-200">
-                  <div className="text-lg font-semibold text-orange-600">👑 Special Power:</div>
-                  <div className="text-orange-700">Making everyone go bananas with laughter!</div>
+                  <div className="text-lg font-semibold text-orange-600">
+                    🧠 Gudha Level:
+                  </div>
+                  <div className="text-orange-700">Supreme Monkey Wisdom</div>
+                </div>
+                <div className="bg-white p-4 rounded-lg border border-orange-200">
+                  <div className="text-lg font-semibold text-orange-600">
+                    🍌 Banana Skills:
+                  </div>
+                  <div className="text-orange-700">
+                    {acceptedBot
+                      ? "Bot-level banana peeling"
+                      : "Expert banana connoisseur"}
+                  </div>
+                </div>
+                <div className="bg-white p-4 rounded-lg border border-orange-200">
+                  <div className="text-lg font-semibold text-orange-600">
+                    👑 Special Power:
+                  </div>
+                  <div className="text-orange-700">
+                    Making everyone go bananas with laughter!
+                  </div>
                 </div>
               </div>
             </div>
@@ -168,13 +206,13 @@ export default function KothiGudhaGame() {
 
             <button
               onClick={() => {
-                setCurrentGuess("")
-                setAttempts(0)
-                setAcceptedBot(false)
-                setShowConfetti(false)
-                setBlurLevel(20)
-                setGameRevealed(false)
-                setRevealedLetters(new Array(targetName.length).fill(false))
+                setCurrentGuess("");
+                setAttempts(0);
+                setAcceptedBot(false);
+                setShowConfetti(false);
+                setBlurLevel(20);
+                setGameRevealed(false);
+                setRevealedLetters(new Array(targetName.length).fill(false));
               }}
               className="text-lg px-8 py-3 rounded-md font-medium text-white transition-all duration-300 transform hover:scale-105"
               style={{ backgroundColor: "#f97316" }}
@@ -184,7 +222,7 @@ export default function KothiGudhaGame() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -198,7 +236,11 @@ export default function KothiGudhaGame() {
         />
       </div>
 
-      <Card className={`w-full max-w-lg ${showShake ? "shake" : ""} border-orange-200 relative z-10`}>
+      <Card
+        className={`w-full max-w-lg ${
+          showShake ? "shake" : ""
+        } border-orange-200 relative z-10`}
+      >
         <CardHeader className="text-center">
           <div className="mb-4 flex justify-center">
             <img
@@ -208,21 +250,34 @@ export default function KothiGudhaGame() {
               style={{ filter: `blur(${blurLevel}px)` }}
             />
           </div>
-          <CardTitle className="text-2xl font-bold text-orange-600">🕵️ Guess Your Real Name!</CardTitle>
-          <CardDescription className="text-orange-700">{getHintText()}</CardDescription>
+          <CardTitle className="text-2xl font-bold text-orange-600">
+            🕵️ Guess Your Real Name!
+          </CardTitle>
+          <CardDescription className="text-orange-700">
+            {getHintText()}
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="text-center p-6 bg-orange-50 rounded-lg border-2 border-dashed border-orange-300">
-            <div className="text-sm text-orange-600 mb-2">The monkey says your real name is:</div>
+            <div className="text-sm text-orange-600 mb-2">
+              The monkey says your real name is:
+            </div>
             <div className="font-mono text-center">{renderRevealedName()}</div>
           </div>
 
           <div className="flex justify-center gap-2">
-            <Badge variant="secondary" className="bg-orange-100 text-orange-800">
+            <Badge
+              variant="secondary"
+              className="bg-orange-100 text-orange-800"
+            >
               Attempts: {attempts}/{maxAttempts}
             </Badge>
-            <Badge variant="outline" className="border-orange-300 text-orange-700">
-              Letters revealed: {revealedLetters.filter(Boolean).length}/{targetName.length}
+            <Badge
+              variant="outline"
+              className="border-orange-300 text-orange-700"
+            >
+              Letters revealed: {revealedLetters.filter(Boolean).length}/
+              {targetName.length}
             </Badge>
           </div>
 
@@ -248,8 +303,12 @@ export default function KothiGudhaGame() {
             </div>
           ) : (
             <div className="text-center space-y-4">
-              <p className="text-lg font-medium text-orange-700">The monkey thinks you might be a bot!</p>
-              <p className="text-sm text-orange-600">Accept your bot nature to see what the monkey has for you!</p>
+              <p className="text-lg font-medium text-orange-700">
+                The monkey thinks you might be a bot!
+              </p>
+              <p className="text-sm text-orange-600">
+                Accept your bot nature to see what the monkey has for you!
+              </p>
               <button
                 onClick={handleAcceptBot}
                 className="py-3 px-4 rounded-md font-medium text-white transition-all duration-300 hover:opacity-90"
@@ -262,5 +321,5 @@ export default function KothiGudhaGame() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
